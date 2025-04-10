@@ -1,13 +1,32 @@
 import { StyleSheet, View } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
+import Square from './Square';
 
 const Board = () => {
+    const [squares, setSquares] = useState(Array(9).fill(null));
+    const [isXTurn, setIsXTurns] = useState(true);
+
+    const handlePress = (index) => {
+        if (squares[index]) return;
+
+        const newSquares = [...squares];
+        newSquares[index] = isXTurn ? 'X' : 'O';
+        setSquares(newSquares);
+        setIsXTurns(!isXTurn);
+    };
+
     return (
         <View style={styles.board}>
-            {/* Buraya 3*3 kareler gelecek */}
+            {squares.map((value, index) => (
+                <Square
+                    key={index}
+                    value={value}
+                    onPress={() => handlePress(index)}
+                />
+            ))}
         </View>
-    )
-}
+    );
+};
 
 export default Board;
 
