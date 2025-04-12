@@ -2,11 +2,19 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
 import Square from './Square';
 import { checkWinner } from '../utils/helpers';
+import * as Animatable from 'react-native-animatable';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { getWinType } from '../utils/animationHelpers';
+
+const boardSize = 300;
+const squareSize = boardSize / 3;
 
 const Board = () => {
     const [squares, setSquares] = useState(Array(9).fill(null));
     const [isXTurn, setIsXTurns] = useState(true);
     const [winner, setWinner] = useState(null);
+    const [winningCombo, setWinningCombo] = useState([]);
+    const [winType, setWinType] = useState(null);
 
     const handlePress = (index) => {
         if (squares[index] || winner) return;
@@ -16,9 +24,12 @@ const Board = () => {
         setSquares(newSquares);
         setIsXTurns(!isXTurn);
 
-        const detectedWinner = checkWinner(newSquares);
-        if (detectedWinner) {
-            setWinner(detectedWinner);
+        const result = checkWinner(newSquares);
+
+        if (result?.winner) {
+            setWinner(result.winner);
+            setWinningCombo(result.winningCombo);
+            setWinType(getWinType(result.winningCombo));
         } else if (!newSquares.includes(null)) {
             setWinner('Draw');
         }
@@ -28,34 +39,57 @@ const Board = () => {
         setSquares(Array(9).fill(null));
         setIsXTurns(true);
         setWinner(null);
+        setWinningCombo([]);
+        setWinType(null);
+    };
+
+    const isWinningCombo = (index) => {
+        return winningCombo.includes(index);
     };
 
     return (
-        <View style={styles.board}>
-            {squares.map((value, index) => (
-                <Square
-                    key={index}
-                    value={value}
-                    onPress={() => handlePress(index)}
-                />
-            ))}
+        <SafeAreaView style={styles.safeArea}>
+            <View style={styles.board}>
+                {squares.map((value, index) => (
+                    <Square
+                        key={index}
+                        value={value}
+                        onPress={() => handlePress(index)}
+                        isWinning={winningCombo.includes(index)}
+                        winType={isWinningCombo(index) ? winType : null}
+                        index={index}
+                    />
+                ))}
+            </View>
+
             {winner && (
                 <View style={styles.playAgainContainer}>
-                    <Text style={styles.winnerText}>
-                        {winner === 'Draw' ? "It'a Draw!" : `${winner} Wins!`}
-                    </Text>
+                    <Animatable.Text
+                        animation='pulse'
+                        iterationCount='infinite'
+                        easing='ease-in-out'
+                        style={styles.winnerText}
+                    >
+                        {winner === 'Draw' ? "It's a Draw!" : `${winner} Wins!`}
+                    </Animatable.Text>
                     <TouchableOpacity style={styles.playAgainButton} onPress={resetGame}>
                         <Text style={styles.playAgainText}>Play Again</Text>
                     </TouchableOpacity>
                 </View>
             )}
-        </View>
+        </SafeAreaView>
     );
 };
 
 export default Board;
 
 const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#000',
+    },
     board: {
         width: 300,
         height: 300,
@@ -63,7 +97,6 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         backgroundColor: '#1e1e1e',
         borderRadius: 10,
-        padding: 5,
     },
     winnerText: {
         fontSize: 24,

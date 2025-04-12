@@ -8,7 +8,7 @@ export const checkWinner = (squares) => {
     for (let combo of winningCombinations) {
         const [a, b, c] = combo;
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-            return squares[a];
+            return { winner: squares[a], winningCombo: combo };
         }
     }
 
