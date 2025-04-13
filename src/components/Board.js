@@ -1,10 +1,12 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Square from './Square';
 import { checkWinner } from '../utils/helpers';
 import * as Animatable from 'react-native-animatable';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getWinType } from '../utils/animationHelpers';
+import { playBackgroundMusic, stopBackgroundMusic } from '../utils/soundManager';
+import MusicToggleButton from './MusicToggleButton';
 
 const boardSize = 300;
 const squareSize = boardSize / 3;
@@ -15,6 +17,14 @@ const Board = () => {
     const [winner, setWinner] = useState(null);
     const [winningCombo, setWinningCombo] = useState([]);
     const [winType, setWinType] = useState(null);
+
+    useEffect(() => {
+        playBackgroundMusic();
+
+        return () => {
+            stopBackgroundMusic();
+        };
+    }, [])
 
     const handlePress = (index) => {
         if (squares[index] || winner) return;
@@ -49,6 +59,7 @@ const Board = () => {
 
     return (
         <SafeAreaView style={styles.safeArea}>
+            <MusicToggleButton />
             <View style={styles.board}>
                 {squares.map((value, index) => (
                     <Square
