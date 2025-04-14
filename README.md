@@ -21,15 +21,6 @@ This project features animated backgrounds, sound effects, neon-themed glitchy d
 
 ---
 
-# 👁️ Screenshots
-
-<img src="./assets/screenshots/screenshot1.png" width="250" />
-<img src="./assets/screenshots/screenshot2.png" width="250" />
-<img src="./assets/screenshots/screenshot3.png" width="250" />
-
-
----
-
 # 📒 Installation
 
 ```bash
