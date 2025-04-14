@@ -5518,6 +5518,11 @@ react-native-animatable@^1.4.0:
   dependencies:
     prop-types "^15.8.1"
 
+react-native-cyberpunk-button@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-cyberpunk-button/-/react-native-cyberpunk-button-1.0.1.tgz#5eab601f9ac3d97ddea93c0ece2ff879e1833dae"
+  integrity sha512-isIIb57ohHfef7OyqE6FX3KLOJL09Yf75YHfbTCMhHbegjZ4cwGvIDpKsW0XX8o+frvEMSxN+kRdJL1UOhwoDg==
+
 react-native-is-edge-to-edge@1.1.7:
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/react-native-is-edge-to-edge/-/react-native-is-edge-to-edge-1.1.7.tgz#28947688f9fafd584e73a4f935ea9603bd9b1939"

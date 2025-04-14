@@ -7,6 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { getWinType } from '../utils/animationHelpers';
 import { playBackgroundMusic, stopBackgroundMusic } from '../utils/soundManager';
 import MusicToggleButton from './MusicToggleButton';
+import CyberButton from 'react-native-cyberpunk-button';
+import LottieView from 'lottie-react-native';
 
 const boardSize = 300;
 const squareSize = boardSize / 3;
@@ -17,6 +19,17 @@ const Board = () => {
     const [winner, setWinner] = useState(null);
     const [winningCombo, setWinningCombo] = useState([]);
     const [winType, setWinType] = useState(null);
+    const [winnerAnimation, setWinnerAnimation] = useState(undefined);
+
+    useEffect(() => {
+        if (winner) {
+            const interval = setInterval(() => {
+                setWinnerAnimation(prev => (prev === 'flash' ? undefined : 'flash'));
+            }, 1500);
+            return () => clearInterval(interval);
+        }
+    }, [winner]);
+
 
     useEffect(() => {
         playBackgroundMusic();
@@ -59,6 +72,14 @@ const Board = () => {
 
     return (
         <SafeAreaView style={styles.safeArea}>
+            <LottieView
+                source={require('../assets/animations/rain.json')}
+                autoPlay
+                loop
+                resizeMode='cover'
+                style={[StyleSheet.absoluteFill, { opacity: 0.3 }]}
+            />
+
             <MusicToggleButton />
             <View style={styles.board}>
                 {squares.map((value, index) => (
@@ -69,6 +90,7 @@ const Board = () => {
                         isWinning={winningCombo.includes(index)}
                         winType={isWinningCombo(index) ? winType : null}
                         index={index}
+                        isDraw={winner === 'Draw'}
                     />
                 ))}
             </View>
@@ -76,15 +98,23 @@ const Board = () => {
             {winner && (
                 <View style={styles.playAgainContainer}>
                     <Animatable.Text
-                        animation='pulse'
+                        animation={winnerAnimation}
                         iterationCount='infinite'
                         easing='ease-in-out'
-                        style={styles.winnerText}
+                        style={styles.glitchWinnerText}
                     >
                         {winner === 'Draw' ? "It's a Draw!" : `${winner} Wins!`}
                     </Animatable.Text>
-                    <TouchableOpacity style={styles.playAgainButton} onPress={resetGame}>
-                        <Text style={styles.playAgainText}>Play Again</Text>
+                    <TouchableOpacity onPress={resetGame}>
+                        <CyberButton
+                            label='Play Again'
+                            buttonHeight={80}
+                            mainColor='#FFD700'
+                            shadowColor='red'
+                            glitchDuration={1000}
+                            glitchAmplitude={5}
+                            labelTextStyle={{ color: 'black' }}
+                        />
                     </TouchableOpacity>
                 </View>
             )}
@@ -131,5 +161,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignSelf: 'center',
         width: 300,
+        gap: 20,
+    },
+    glitchWinnerText: {
+        fontSize: 32,
+        fontWeight: 'bold',
+        color: '#FFD700',
+        textShadowColor: 'red',
+        textShadowOffset: { width: 2, height: 2 },
+        textShadowRadius: 10,
+        letterSpacing: 2,
+        textAlign: 'center',
+        transform: [{ skewX: '-5deg' }],
     },
 });

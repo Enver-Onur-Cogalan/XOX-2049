@@ -1,9 +1,8 @@
-import { StyleSheet, Text, TouchableOpacity, View, Animated, Easing } from 'react-native';
+import { StyleSheet, TouchableOpacity, Animated, Easing } from 'react-native';
 import React, { useEffect, useRef } from 'react';
-import MaskedView from '@react-native-masked-view/masked-view';
-import LinearGradient from 'react-native-linear-gradient';
+import * as Animatable from 'react-native-animatable';
 
-const Square = ({ value, onPress, isWinning, winType, index }) => {
+const Square = ({ value, onPress, isWinning, winType, index, isDraw }) => {
     const animation = useRef(new Animated.Value(0)).current;
     const shakeAnim = useRef(new Animated.Value(0)).current;
     const glowAnim = useRef(new Animated.Value(1)).current;
@@ -97,23 +96,22 @@ const Square = ({ value, onPress, isWinning, winType, index }) => {
     return (
         <TouchableOpacity style={styles.square} onPress={onPress}>
             {value ? (
-                <MaskedView
-                    style={styles.maskedView}
-                    maskElement={
-                        <View style={styles.maskInner}>
-                            <Text style={styles.text}>
-                                {value}
-                            </Text>
-                        </View>
-                    }
+                <Animatable.Text
+                    animation={isWinning ? 'rubberBand' : isDraw ? 'jello' : undefined}
+                    iterationCount='infinite'
+                    easing='ease-in-out'
+                    style={[
+                        styles.text,
+                        {
+                            color: value === 'X' ? '#FF4C4C' : '#00FFFF',
+                            textShadowColor: value === 'X' ? '#FF0000' : '#007FFF',
+                            textShadowOffset: { width: 2, height: 2 },
+                            textShadowRadius: 10,
+                        }
+                    ]}
                 >
-                    <LinearGradient
-                        colors={value === 'X' ? ['#FF4C4C', '#FF0000'] : ['#00FFFF', '#007FFF']}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 0, y: 1 }}
-                        style={styles.gradient}
-                    />
-                </MaskedView>
+                    {value}
+                </Animatable.Text>
             ) : null}
             {isWinning && (
                 <Animated.View style={[lineStyle,
@@ -183,5 +181,10 @@ const styles = StyleSheet.create({
         shadowRadius: 10,
         shadowOffset: { width: 0, height: 0 },
         elevation: 10,
+    },
+    animationText: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
