@@ -40,7 +40,7 @@ const Board = () => {
     }, [])
 
     const handlePress = (index) => {
-        if (squares[index] || winner) return;
+        if (squares[index] || winner) return;  // When a square is clicked, process the move and check the winner
 
         const newSquares = [...squares];
         newSquares[index] = isXTurn ? 'X' : 'O';
